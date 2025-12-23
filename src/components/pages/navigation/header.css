@@ -1,0 +1,16 @@
+.navbar {
+    margin: 0 10vw;
+}
+
+h2, p {
+    color: #ffffff !important;
+    font-family: 'Montserrat', sans-serif;
+    text-shadow: 0 0 5px #ffffff, 0 0 2px #ffffff, 0 0 10px #ffffff;
+}
+
+.right-side{
+    display: flex;
+    color: #ffffff;
+    text-decoration: underline;
+    gap: 20px;
+}
