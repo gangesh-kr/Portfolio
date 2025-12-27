@@ -1,13 +1,14 @@
 import './App.css';
 import Header from './components/pages/navigation/Header';
 import Profile from './components/pages/profile/Profile';
+import ParticlesCursor from './components/particle-cursor/particle-cursor';
 import ThreeSection from './components/three/ThreeSection';
 
 function App() {
   return (
     <>
       <div className="app">
-
+        <ParticlesCursor />
         {/* Header */}
         <Header />
         {/* Hero Section */}
