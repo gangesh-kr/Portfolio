@@ -4,12 +4,14 @@ import Contact from './components/pages/contact-us/Contact';
 import Experience from './components/pages/experience/Experience';
 import Navigation from './components/pages/navigation/Navigation';
 import Profile from './components/pages/profile/Profile';
-import ThreeSection from './components/three/ThreeSection';
+import ThreeModel from './components/three/3dModel/ThreeModel';
+import Background from './components/three/background/Background';
 
 function App() {
 
   return (
     <>
+    <Background />
       <div className="app">
 
         {/* Header */}
@@ -18,7 +20,7 @@ function App() {
 
 
         <Profile />
-        <ThreeSection />
+        <ThreeModel />
 
         <Experience />
         <Contact />

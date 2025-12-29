@@ -3,7 +3,7 @@ import './profile.css';
 
 export default function Profile() {
   return (
-    <div className='profile'>
+    <section className='profile'>
         <h1>
             Hello !
         </h1>
@@ -13,6 +13,6 @@ export default function Profile() {
         <h3>
             I convert ideas into reality.
         </h3>
-    </div>
+    </section>
   )
 }

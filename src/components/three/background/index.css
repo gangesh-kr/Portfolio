@@ -1,0 +1,9 @@
+.three-background {
+    width: 100%;  /* Remove quotes */
+    height: 100vh;  /* Remove quotes */
+    top: 0;
+    left: 0;
+    z-index: 0;
+    background-color: #051F20;  /* Remove quotes */
+    position: fixed;  /* Remove quotes */
+}

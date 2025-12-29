@@ -1,11 +1,11 @@
 import React from 'react';
 import './three.css';
 
-export default function ThreeSection() {
+export default function ThreeModel() {
   return (
     <div className='three-component'>
         <p>
-          Three Component
+          Three Model Component
         </p>
     </div>
   )
