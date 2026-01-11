@@ -1,13 +1,25 @@
-body,
-html,
-#root {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  background-color:#051F20;
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-charcoal: #121212;
+  --color-gold: #D4AF37;
+  --color-whitesmoke: #F5F5F5;
+  --color-neon-gold: #FFD700;
+  --color-glass: rgba(255, 255, 255, 0.05);
+
+  --font-sans: "Inter Tight", sans-serif;
+  --font-mono: "Space Mono", monospace;
 }
 
-* {
-  box-sizing: border-box;
+
+@layer base {
+  body {
+    @apply bg-charcoal text-whitesmoke overflow-hidden;
+    font-family: var(--font-sans);
+  }
+}
+
+canvas {
+  touch-action: none;
 }
