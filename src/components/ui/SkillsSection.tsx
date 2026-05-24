@@ -8,28 +8,28 @@ gsap.registerPlugin(ScrollTrigger, CSSPlugin);
 
 const skillCategories = [
     {
-        title: 'Frontend Development',
-        years: '4 years',
+        title: 'Frontend',
+        years: '5 years',
         icon: '🎨',
-        skills: ['React.js', 'TypeScript', 'Three.js', 'WebGL', 'Redux', 'HTML5/CSS3', 'Material-UI', 'Tailwind CSS']
+        skills: ['React.js', 'TypeScript', 'JavaScript (ES6+)', 'Three.js', 'WebGL', 'Redux', 'Redux Toolkit', 'React Native', 'HTML5/CSS3', 'Material-UI', 'Bootstrap']
     },
     {
-        title: 'Backend Development',
-        years: '2.8 years',
+        title: 'Backend',
+        years: '4 years',
         icon: '⚙️',
-        skills: ['Node.js', 'Express.js', 'RESTful APIs', 'Microservices', 'MySQL', 'MongoDB', 'SQL', 'GraphQL']
+        skills: ['Node.js', 'Express.js', 'REST APIs', 'Microservices', 'Python', 'Redis', 'OAuth/RBAC/MFA', 'Firebase Auth']
     },
     {
-        title: 'DevOps & Tools',
+        title: 'Databases & Cloud',
+        years: '4 years',
+        icon: '☁️',
+        skills: ['PostgreSQL', 'MySQL', 'MS SQL', 'MongoDB', 'Redis', 'Docker', 'GCP', 'AWS', 'Jenkins', 'Azure DevOps', 'CI/CD']
+    },
+    {
+        title: 'AI & Tools',
         years: '2 years',
-        icon: '🔧',
-        skills: ['Git/GitHub', 'Jenkins CI/CD', 'Docker', 'GCP', 'Jira', 'Postman', 'Swagger', 'Linux']
-    },
-    {
-        title: 'Core Skills',
-        years: '3 years',
-        icon: '💡',
-        skills: ['Data Structures', 'System Design', 'OAuth/RBAC', 'Redis Caching', 'FHIR Standards', 'RPA Automation']
+        icon: '🤖',
+        skills: ['LLM APIs', 'Prompt Engineering', 'RAG', 'MCP Servers', 'Vision AI', 'OCR', 'WhatsApp Business API', 'Jira', 'Postman', 'Figma']
     }
 ];
 
@@ -39,18 +39,24 @@ const workExperience = [
         role: 'Software Development Engineer',
         period: 'April 2025 – Present',
         highlights: [
-            'CAD file visualization with Three.js and WebGL',
-            'Web browser for CAD files with admin section'
+            'Built BCG — boilerplate code generation for Three.js 3D model viewers',
+            'Added Draco (.drc) compressed format support for faster CAD load times',
+            'Custom gesture Copy/Paste, Section View & gizmo controls for 3D models',
+            'CAD file browser with admin portal for user & file library management',
+            'Construction 3D Design app with real-time BOM & STEP file export'
         ]
     },
     {
         company: 'Kiswok Industries Pvt. Ltd.',
-        role: 'Node.js Developer / Fullstack',
-        period: 'July 2024 – February 2025',
+        role: 'Node.js Developer / Full Stack Engineer',
+        period: 'July 2024 – March 2025',
         highlights: [
-            'HRMS/CRM reducing paperwork by 70%',
-            'OAuth, RBAC, MFA reducing security risks 40%',
-            'Redis caching improving load times 40-50%'
+            'Led HRMS/CRM platform development — eliminated 70% paperwork',
+            'Built 6 core modules: dashboards, ticketing, onboarding & more',
+            'OAuth, RBAC, MFA authentication — reduced vulnerabilities 40%',
+            'Redis caching & rate limiting — load times improved 40-50%',
+            'Automated email & WhatsApp notifications — 60% less manual work',
+            'CI/CD pipelines cutting deployment time by 70%'
         ]
     },
     {
@@ -58,25 +64,36 @@ const workExperience = [
         role: 'Consultant Software Developer',
         period: 'March 2022 – June 2024',
         highlights: [
-            'Healthcare app serving 50K+ users (FHIR)',
-            'React.js migration improving performance 35%',
-            'CI/CD pipelines reducing deployment time 70%'
+            'Led React.js v14→v18 & Express.js migration — 35% perf improvement',
+            'Built OtisHealth — FHIR healthcare app serving 50,000+ users',
+            'CI/CD with Jenkins & GCP — 70% faster deployments, 99.9% uptime',
+            'REST APIs with microservices — 60% less system coupling',
+            'Contributed to React Native mobile & Angular trading platform'
         ]
     },
     {
-        company: 'LOTS Wholesale Solution',
+        company: 'Lots Wholesale Solution',
         role: 'IT Trainee',
-        period: 'Sept 2021 – February 2022',
+        period: 'September 2021 – February 2022',
         highlights: [
-            'E-commerce optimization improving speed 40%',
-            'Python automation adding 40% productivity'
+            'Maintained high-traffic e-commerce site — resolved 100+ issues',
+            'Improved site speed by 40% through optimization',
+            'Python & RPA automation — boosted team productivity 40%'
         ]
     },
 ];
 
+const education = {
+    degree: 'Bachelor of Technology in Computer Science Engineering',
+    college: 'Asansol Engineering College (MAKAUT)',
+    location: 'West Bengal, India',
+    period: 'June 2017 – July 2021',
+    cgpa: '8.6 / 10'
+};
+
 const contactInfo = {
     linkedin: 'https://www.linkedin.com/in/gangeshkr996/',
-    github: 'https://github.com/gangesh-kr',
+    github: 'https://github.com/gangeshkr996',
     email: 'gangeshkr996@gmail.com',
     phone: '+91 8757202653'
 };
@@ -284,7 +301,7 @@ export default function SkillsSection() {
     }, []);
 
     return (
-        <div ref={containerRef} className="bg-charcoal relative overflow-hidden">
+        <div ref={containerRef} className="bg-transparent relative overflow-hidden">
             <GridBackground />
             <GlowingOrbs />
             <FloatingParticles count={40} />
@@ -299,8 +316,8 @@ export default function SkillsSection() {
                             </span>
                         </h2>
                         <p className="text-zinc-400 text-lg max-w-2xl mx-auto leading-relaxed">
-                            Full Stack Developer with 3+ years specializing in MERN stack,
-                            healthcare software, and enterprise applications
+                            Full Stack Engineer with 5 years of experience building scalable web apps
+                            across healthcare, enterprise SaaS, and 3D CAD visualization
                         </p>
                     </div>
 
@@ -390,6 +407,37 @@ export default function SkillsSection() {
                 </div>
             </section>
 
+            {/* Education Section */}
+            <section className="relative z-20 py-24 px-8 flex items-center">
+                <div className="max-w-5xl mx-auto w-full relative z-10">
+                    <div className="text-center mb-16 px-parallax-medium">
+                        <h3 className="text-4xl font-bold text-white mb-4 tracking-tight">Education</h3>
+                        <div className="w-24 h-1.5 bg-gradient-to-r from-amber-400 to-orange-500 mx-auto rounded-full" />
+                    </div>
+
+                    <div className="max-w-2xl mx-auto">
+                        <div className="exp-card p-10 rounded-3xl bg-zinc-900/40 border border-zinc-800/50
+                                       hover:border-amber-500/20 transition-all duration-300
+                                       hover:bg-zinc-900/60 backdrop-blur-xl text-center">
+                            <div className="text-5xl mb-6">🎓</div>
+                            <h4 className="text-2xl font-bold text-white mb-2">{education.degree}</h4>
+                            <p className="text-amber-500 font-semibold tracking-wide uppercase text-sm mb-4">
+                                {education.college}
+                            </p>
+                            <p className="text-zinc-400 text-sm mb-4">{education.location}</p>
+                            <div className="flex justify-center gap-6">
+                                <span className="text-zinc-500 font-mono text-sm bg-zinc-800/50 px-4 py-1.5 rounded-md border border-zinc-700/30">
+                                    {education.period}
+                                </span>
+                                <span className="text-amber-400 font-mono text-sm bg-amber-500/10 px-4 py-1.5 rounded-md border border-amber-500/20 font-bold">
+                                    CGPA: {education.cgpa}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* Contact Section */}
             <section className="relative z-20 py-24 px-8 min-h-screen flex items-center">
                 <div className="max-w-4xl mx-auto w-full relative z-10">
@@ -416,7 +464,7 @@ export default function SkillsSection() {
                                     hover:border-purple-500/30 transition-all duration-500 hover:bg-zinc-900/60 backdrop-blur-xl">
                             <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">🐙</div>
                             <h4 className="text-white font-bold mb-1">GitHub</h4>
-                            <p className="text-zinc-500 text-sm truncate">@gangesh-kr</p>
+                            <p className="text-zinc-500 text-sm truncate">@gangeshkr996</p>
                         </a>
 
                         <a href={`mailto:${contactInfo.email}`}

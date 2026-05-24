@@ -65,7 +65,7 @@ function App() {
                     <main className="relative z-10 w-full h-screen pointer-events-none mix-blend-difference text-whitesmoke p-8 md:p-16 flex flex-col justify-center">
                         <HeroText
                             text="GANGESH KUMAR"
-                            subtext="FULLSTACK DEVELOPER // CREATIVE TECHNOLOGIST"
+                            subtext="FULL STACK ENGINEER // MERN | THREE.JS | GEN AI"
                         />
 
                         <footer className="absolute bottom-8 left-8 right-8 flex justify-between items-end">

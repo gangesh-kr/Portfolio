@@ -5,11 +5,11 @@ import { CSSPlugin } from 'gsap/CSSPlugin';
 gsap.registerPlugin(CSSPlugin);
 
 const ROLES = [
-    "FULLSTACK DEVELOPER",
-    "CREATIVE TECHNOLOGIST",
-    "WEBGL EXPERT",
-    "SYSTEM ARCHITECT",
-    "UI/UX ENGINEER"
+    "FULL STACK ENGINEER",
+    "MERN STACK DEVELOPER",
+    "THREE.JS & WEBGL EXPERT",
+    "GEN AI & LLM ENGINEER",
+    "NODE.JS DEVELOPER"
 ];
 
 const GARBLE = "0123456789!@#$%^&*()_+-=[]{}|;:,.<>?/";
