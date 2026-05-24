@@ -19,11 +19,11 @@ export function App() {
       <ExperienceSection />
 
       {/* Contact / Footer */}
-      <footer
+      {/* <footer
         id="contact"
-        className="bg-[#0C0C0C] text-[#D7E2EA] px-6 md:px-10 py-20 sm:py-24 border-t border-zinc-900 flex flex-col items-center text-center relative z-20"
+        className="bg-[#0C0C0C] text-[#D7E2EA] px-6 md:px-10 py-20 sm:py-24 flex flex-col items-center text-center relative z-20"
       >
-        <FadeIn delay={0} y={30} duration={0.8} className="flex flex-col items-center max-w-3xl">
+        <FadeIn delay={0} y={30} duration={0.8} className="flex flex-col items-center">
           <span className="text-[#D7E2EA]/50 uppercase tracking-widest text-xs sm:text-sm font-semibold mb-4 select-none">
             Get In Touch
           </span>
@@ -46,7 +46,7 @@ export function App() {
           <p>© 2026 Gangesh Kumar. All Rights Reserved.</p>
           <div className="flex gap-6">
             <a
-              href="https://github.com/gangeshkr996"
+              href="https://github.com/gangesh-kr"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-[#D7E2EA] transition-colors duration-300 uppercase tracking-wider font-medium"
@@ -54,7 +54,7 @@ export function App() {
               GitHub
             </a>
             <a
-              href="https://www.linkedin.com/search/results/all/?keywords=Gangesh+Kumar"
+              href="https://www.linkedin.com/in/gangeshkr996/"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-[#D7E2EA] transition-colors duration-300 uppercase tracking-wider font-medium"
@@ -69,7 +69,7 @@ export function App() {
             </a>
           </div>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }

@@ -227,10 +227,6 @@ export function TechStack() {
         </h2>
       </div>
 
-      {/* 3D Canvas
-          eventSource + eventPrefix: moves R3F's listener to <html> so the
-          <canvas> element itself never swallows wheel/scroll events.
-          This is the official R3F fix — no manual forwarding needed. */}
       <div
         ref={canvasWrapperRef}
         className="w-full"

@@ -19,7 +19,7 @@ export function AboutSection() {
         <FadeIn delay={0} y={40} duration={0.8}>
           <h2
             className="hero-heading font-black uppercase leading-none tracking-tight"
-            style={{ fontSize: 'clamp(2.5rem, 10vw, 140px)' }}
+            style={{ fontSize: 'clamp(2.5rem, 10vw, 140px)', padding:'20px'}}
           >
             About me
           </h2>
