@@ -44,9 +44,7 @@ const getTexture = (name: string) => {
   else if (name === "SQL / MySQL") path = "/images/mysql.webp";
   else if (name === "Next.js" || name === "NextJS") path = "/images/next1.webp";
 
-  if (path === "/images/placeholder.webp") {
-    return placeholderTexture;
-  }
+  if (path === "/images/placeholder.webp") return placeholderTexture;
 
   const texture = textureLoader.load(path);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -158,50 +156,41 @@ function Pointer({ vec = new THREE.Vector3(), isActive }: PointerProps) {
 
 export function TechStack() {
   const [isActive, setIsActive] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
 
-  // Intersection observer — only run physics when section is visible
+  // Only run physics when section is visible
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsActive(entry.isIntersecting);
-      },
-      { threshold: 0.1 }
+      ([entry]) => setIsActive(entry.isIntersecting),
+      { threshold: 0.05 }
     );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
-    return () => {
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current);
-      }
-    };
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => observer.disconnect();
   }, []);
 
-  // Fix: forward wheel events from canvas so page scroll is never blocked
+  // Pause Lenis while dragging the 3D canvas so drag works,
+  // resume immediately on release so page scroll stays buttery smooth
   useEffect(() => {
+    const lenis = (window as any).__lenis;
     const wrapper = canvasWrapperRef.current;
-    if (!wrapper) return;
+    if (!lenis || !wrapper) return;
 
-    const forwardWheel = (e: WheelEvent) => {
-      // Re-dispatch on the section element so the page scrolls normally
-      const section = containerRef.current;
-      if (!section) return;
-      section.scrollTop += e.deltaY;
-      // Also scroll the window
-      window.scrollBy({ top: e.deltaY, behavior: "auto" });
+    const onDown = () => { setIsDragging(true); lenis.stop(); };
+    const onUp   = () => { setIsDragging(false); lenis.start(); };
+
+    wrapper.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+
+    return () => {
+      wrapper.removeEventListener('pointerdown', onDown);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+      lenis.start(); // safety: always re-enable on unmount
     };
-
-    // Use capture:false, passive:true so we don't block scroll
-    const canvas = wrapper.querySelector("canvas");
-    if (canvas) {
-      canvas.addEventListener("wheel", forwardWheel, { passive: true });
-      return () => canvas.removeEventListener("wheel", forwardWheel);
-    }
-  }, [isActive]);
+  }, []);
 
   const materials = useMemo(() => {
     return TECH_ITEMS.map((item) => {
@@ -222,12 +211,11 @@ export function TechStack() {
     <section
       ref={containerRef}
       id="techstack"
-      // touch-action: pan-y lets mobile browsers handle vertical scroll
       style={{ touchAction: "pan-y" }}
       className="relative bg-[#0C0C0C] text-[#D7E2EA] w-full overflow-hidden border-t border-zinc-900/50"
     >
-      {/* ── Heading — sits above the canvas, properly sized ── */}
-      <div className="relative z-20 flex flex-col items-center pt-16 pb-4 pointer-events-none select-none">
+      {/* Heading */}
+      <div className="relative z-20 flex flex-col items-center pt-16 pb-6 pointer-events-none select-none">
         <span className="text-[#D7E2EA]/40 uppercase tracking-widest text-xs font-semibold mb-3">
           Built with
         </span>
@@ -239,36 +227,26 @@ export function TechStack() {
         </h2>
       </div>
 
-      {/* ── 3D Physics Canvas ── */}
-      {/*
-        Key fixes:
-        1. eventSource={document.documentElement} — moves R3F event listeners
-           to the document root so the <canvas> element itself no longer
-           swallows pointer / wheel events.
-        2. eventPrefix="client" — required companion prop for eventSource.
-        3. The wrapper has pointer-events-none by default; we restore them
-           only for the canvas so hover/drag still work but scroll is free.
-      */}
+      {/* 3D Canvas
+          eventSource + eventPrefix: moves R3F's listener to <html> so the
+          <canvas> element itself never swallows wheel/scroll events.
+          This is the official R3F fix — no manual forwarding needed. */}
       <div
         ref={canvasWrapperRef}
-        className="w-full relative"
-        style={{ height: "70vh" }}
+        className="w-full"
+        style={{ height: "70vh", cursor: isDragging ? "grabbing" : "grab" }}
       >
         <Canvas
           shadows
           gl={{ alpha: true, stencil: false, depth: false, antialias: true }}
           camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
-          // Move event source to the document so the canvas DOM element
-          // no longer intercepts scroll / wheel events
           eventSource={document.documentElement}
           eventPrefix="client"
           onCreated={(state) => {
             state.gl.toneMappingExposure = 1.5;
-            // Ensure the canvas itself does NOT block touch scroll
             state.gl.domElement.style.touchAction = "none";
           }}
           style={{ width: "100%", height: "100%" }}
-          className="cursor-grab active:cursor-grabbing"
         >
           <ambientLight intensity={1} />
           <spotLight

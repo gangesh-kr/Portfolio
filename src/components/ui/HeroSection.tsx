@@ -36,7 +36,8 @@ export function HeroSection() {
       </FadeIn>
 
         {/* ── 2. PORTRAIT (CENTERED ABSOLUTELY) ──────────────────────────────── */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">        <FadeIn delay={0.6} y={30} duration={0.9} className="pointer-events-auto">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">       
+          <FadeIn delay={0.6} y={30} duration={0.9} className="pointer-events-auto">
           <Magnet
             padding={150}
             strength={3}
