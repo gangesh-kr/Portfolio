@@ -1,98 +1,74 @@
-import { useRef, useState, useEffect, ReactNode, CSSProperties } from 'react';
+import { useRef, useEffect, ReactNode, CSSProperties } from 'react';
 
 interface MagnetProps {
   children: ReactNode;
   padding?: number;
   strength?: number;
-  activeTransition?: string;
-  inactiveTransition?: string;
   className?: string;
 }
 
 export function Magnet({
   children,
-  padding = 150,
-  strength = 3,
-  activeTransition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-  inactiveTransition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  padding = 380,      // large zone — felt across the whole hero center
+  strength = 2.8,
   className = '',
 }: MagnetProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const rafRef = useRef<number>(0);
-  const currentPos = useRef({ x: 0, y: 0 });
-  const targetPos = useRef({ x: 0, y: 0 });
-  const isHoveredRef = useRef(false);
-  const [isHovered, setIsHovered] = useState(false);
+  const wrapRef   = useRef<HTMLDivElement>(null);
+  const rafRef    = useRef<number>(0);
+  const cur       = useRef({ x: 0, y: 0 });
+  const target    = useRef({ x: 0, y: 0 });
+  const hovering  = useRef(false);
 
   useEffect(() => {
-    const el = ref.current;
+    const el = wrapRef.current;
     if (!el) return;
 
-    // RAF loop for buttery smooth lerp — not tied to mousemove rate
+    // Continuous RAF lerp — never blocked by React renders
     const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
     const tick = () => {
-      const speed = isHoveredRef.current ? 0.12 : 0.08;
-
-      currentPos.current.x = lerp(currentPos.current.x, targetPos.current.x, speed);
-      currentPos.current.y = lerp(currentPos.current.y, targetPos.current.y, speed);
-
-      // Only apply transform if there's meaningful movement
-      const dx = Math.abs(currentPos.current.x - targetPos.current.x);
-      const dy = Math.abs(currentPos.current.y - targetPos.current.y);
-
-      el.style.transform = `translate3d(${currentPos.current.x}px, ${currentPos.current.y}px, 0)`;
-
+      // Faster pull-in when hovering, slower release when leaving
+      const speed = hovering.current ? 0.10 : 0.06;
+      cur.current.x = lerp(cur.current.x, target.current.x, speed);
+      cur.current.y = lerp(cur.current.y, target.current.y, speed);
+      el.style.transform = `translate3d(${cur.current.x}px,${cur.current.y}px,0)`;
       rafRef.current = requestAnimationFrame(tick);
     };
-
     rafRef.current = requestAnimationFrame(tick);
 
-    const onMouseMove = (e: MouseEvent) => {
-      const rect = el.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
+    const onMove = (e: MouseEvent) => {
+      const rect     = el.getBoundingClientRect();
+      const cx       = rect.left + rect.width  / 2;
+      const cy       = rect.top  + rect.height / 2;
+      const inX      = e.clientX >= rect.left - padding && e.clientX <= rect.right  + padding;
+      const inY      = e.clientY >= rect.top  - padding && e.clientY <= rect.bottom + padding;
 
-      const isWithinX = e.clientX >= rect.left - padding && e.clientX <= rect.right + padding;
-      const isWithinY = e.clientY >= rect.top - padding && e.clientY <= rect.bottom + padding;
-
-      if (isWithinX && isWithinY) {
-        if (!isHoveredRef.current) {
-          isHoveredRef.current = true;
-          setIsHovered(true);
-        }
-        const distX = e.clientX - centerX;
-        const distY = e.clientY - centerY;
-        targetPos.current = {
-          x: distX / strength,
-          y: distY / strength,
+      if (inX && inY) {
+        hovering.current = true;
+        target.current = {
+          x: (e.clientX - cx) / strength,
+          y: (e.clientY - cy) / strength,
         };
       } else {
-        if (isHoveredRef.current) {
-          isHoveredRef.current = false;
-          setIsHovered(false);
-        }
-        targetPos.current = { x: 0, y: 0 };
+        hovering.current = false;
+        target.current = { x: 0, y: 0 };
       }
     };
 
-    window.addEventListener('mousemove', onMouseMove, { passive: true });
-
+    window.addEventListener('mousemove', onMove, { passive: true });
     return () => {
-      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mousemove', onMove);
       cancelAnimationFrame(rafRef.current);
     };
-  }, [padding, strength]); // only re-run if config changes
+  }, [padding, strength]);
 
   const style: CSSProperties = {
-    willChange: 'transform',
     display: 'inline-block',
-    // We handle transform via RAF, CSS transition only for the snap-back feel
-    transition: isHovered ? activeTransition : inactiveTransition,
+    willChange: 'transform',
   };
 
   return (
-    <div ref={ref} style={style} className={className}>
+    <div ref={wrapRef} style={style} className={className}>
       {children}
     </div>
   );
