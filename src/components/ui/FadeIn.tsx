@@ -1,5 +1,4 @@
-import { ReactNode, ElementType, CSSProperties } from 'react';
-import { motion } from 'framer-motion';
+import { ReactNode, ElementType, CSSProperties, useEffect, useRef } from 'react';
 
 interface FadeInProps {
   children: ReactNode;
@@ -12,34 +11,53 @@ interface FadeInProps {
   style?: CSSProperties;
 }
 
+/**
+ * Lightweight FadeIn using IntersectionObserver + CSS transitions.
+ * Replaces Framer Motion whileInView to avoid JS animation overhead on scroll.
+ */
 export function FadeIn({
   children,
   delay = 0,
   duration = 0.7,
   x = 0,
   y = 30,
-  as = 'div',
+  as: Tag = 'div',
   className = '',
   style,
 }: FadeInProps) {
-  // Using motion.create() or motion(as) to dynamically create the motion component.
-  // motion(as) is standard and safe across versions of Framer Motion.
-  const MotionComponent = motion(as as any);
+  const ref = useRef<HTMLElement>(null);
 
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.style.opacity = '1';
+          el.style.transform = 'translate3d(0,0,0)';
+          observer.disconnect(); // once = true equivalent
+        }
+      },
+      { threshold: 0, rootMargin: '50px' }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const combinedStyle: CSSProperties = {
+    opacity: 0,
+    transform: `translate3d(${x}px, ${y}px, 0)`,
+    transition: `opacity ${duration}s cubic-bezier(0.25,0.1,0.25,1) ${delay}s, transform ${duration}s cubic-bezier(0.25,0.1,0.25,1) ${delay}s`,
+    willChange: 'opacity, transform',
+    ...style,
+  };
+
+  // @ts-ignore — dynamic tag typing
   return (
-    <MotionComponent
-      initial={{ opacity: 0, x, y }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, margin: '50px', amount: 0 }}
-      transition={{
-        delay,
-        duration,
-        ease: [0.25, 0.1, 0.25, 1],
-      }}
-      className={className}
-      style={style}
-    >
+    <Tag ref={ref} className={className} style={combinedStyle}>
       {children}
-    </MotionComponent>
+    </Tag>
   );
 }

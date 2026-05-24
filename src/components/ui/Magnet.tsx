@@ -18,44 +18,59 @@ export function Magnet({
   className = '',
 }: MagnetProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
+  const posRef = useRef({ x: 0, y: 0 });
+  const hoveredRef = useRef(false);
+  const rafRef = useRef<number>(0);
+  const [renderState, setRenderState] = useState({ x: 0, y: 0, hovered: false });
 
   useEffect(() => {
+    let pending = false;
+
     const handleMouseMove = (e: MouseEvent) => {
       if (!ref.current) return;
       const rect = ref.current.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
 
-      // Check if mouse is within padding range of the element edges
       const isWithinX = e.clientX >= rect.left - padding && e.clientX <= rect.right + padding;
       const isWithinY = e.clientY >= rect.top - padding && e.clientY <= rect.bottom + padding;
 
       if (isWithinX && isWithinY) {
-        setIsHovered(true);
-        const distX = e.clientX - centerX;
-        const distY = e.clientY - centerY;
-        setPosition({
-          x: distX / strength,
-          y: distY / strength,
-        });
+        posRef.current = {
+          x: (e.clientX - centerX) / strength,
+          y: (e.clientY - centerY) / strength,
+        };
+        hoveredRef.current = true;
       } else {
-        setIsHovered(false);
-        setPosition({ x: 0, y: 0 });
+        posRef.current = { x: 0, y: 0 };
+        hoveredRef.current = false;
+      }
+
+      // Throttle state updates via rAF
+      if (!pending) {
+        pending = true;
+        rafRef.current = requestAnimationFrame(() => {
+          setRenderState({
+            x: posRef.current.x,
+            y: posRef.current.y,
+            hovered: hoveredRef.current,
+          });
+          pending = false;
+        });
       }
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(rafRef.current);
     };
   }, [padding, strength]);
 
   const style: CSSProperties = {
-    transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
-    transition: isHovered ? activeTransition : inactiveTransition,
-    willChange: 'transform',
+    transform: `translate3d(${renderState.x}px, ${renderState.y}px, 0)`,
+    transition: renderState.hovered ? activeTransition : inactiveTransition,
+    willChange: renderState.hovered ? 'transform' : 'auto',
     display: 'inline-block',
   };
 
@@ -65,4 +80,5 @@ export function Magnet({
     </div>
   );
 }
+
 export default Magnet;

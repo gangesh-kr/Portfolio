@@ -26,7 +26,7 @@ const TECH_ITEMS = [
   { name: "Python" },
   { name: "AWS Cloud" },
   { name: "AI / LLM" },
-  { name: "NestJS" }
+  { name: "NestJS" },
 ];
 
 const textureLoader = new THREE.TextureLoader();
@@ -59,7 +59,7 @@ const spheres = [...Array(30)].map(() => {
   const tech = TECH_ITEMS[Math.floor(Math.random() * TECH_ITEMS.length)];
   return {
     scale: [0.7, 1.0, 0.8, 1.0, 1.0][Math.floor(Math.random() * 5)],
-    tech
+    tech,
   };
 });
 
@@ -93,7 +93,6 @@ function SphereGeo({
           -50 * delta * scale
         )
       );
-
     api.current.applyImpulse(impulse, true);
   });
 
@@ -160,7 +159,9 @@ function Pointer({ vec = new THREE.Vector3(), isActive }: PointerProps) {
 export function TechStack() {
   const [isActive, setIsActive] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const canvasWrapperRef = useRef<HTMLDivElement>(null);
 
+  // Intersection observer — only run physics when section is visible
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -179,6 +180,28 @@ export function TechStack() {
       }
     };
   }, []);
+
+  // Fix: forward wheel events from canvas so page scroll is never blocked
+  useEffect(() => {
+    const wrapper = canvasWrapperRef.current;
+    if (!wrapper) return;
+
+    const forwardWheel = (e: WheelEvent) => {
+      // Re-dispatch on the section element so the page scrolls normally
+      const section = containerRef.current;
+      if (!section) return;
+      section.scrollTop += e.deltaY;
+      // Also scroll the window
+      window.scrollBy({ top: e.deltaY, behavior: "auto" });
+    };
+
+    // Use capture:false, passive:true so we don't block scroll
+    const canvas = wrapper.querySelector("canvas");
+    if (canvas) {
+      canvas.addEventListener("wheel", forwardWheel, { passive: true });
+      return () => canvas.removeEventListener("wheel", forwardWheel);
+    }
+  }, [isActive]);
 
   const materials = useMemo(() => {
     return TECH_ITEMS.map((item) => {
@@ -199,23 +222,53 @@ export function TechStack() {
     <section
       ref={containerRef}
       id="techstack"
-      className="relative bg-[#0C0C0C] text-[#D7E2EA] w-full min-h-[90vh] py-16 z-20 border-t border-zinc-900/50 flex flex-col justify-start items-center overflow-hidden"
+      // touch-action: pan-y lets mobile browsers handle vertical scroll
+      style={{ touchAction: "pan-y" }}
+      className="relative bg-[#0C0C0C] text-[#D7E2EA] w-full overflow-hidden border-t border-zinc-900/50"
     >
-      {/* Background Title - Shifted higher up */}
-      <div className="absolute top-16 left-0 right-0 flex justify-center pointer-events-none select-none z-0">
-        <h2 className="text-[9.5vw] font-black uppercase text-white/[0.08] tracking-tighter text-center leading-none">
-          MY TECHSTACK
+      {/* ── Heading — sits above the canvas, properly sized ── */}
+      <div className="relative z-20 flex flex-col items-center pt-16 pb-4 pointer-events-none select-none">
+        <span className="text-[#D7E2EA]/40 uppercase tracking-widest text-xs font-semibold mb-3">
+          Built with
+        </span>
+        <h2
+          className="hero-heading font-black uppercase tracking-tight text-center leading-none"
+          style={{ fontSize: "clamp(2.8rem, 8vw, 7rem)" }}
+        >
+          My Techstack
         </h2>
       </div>
 
-      {/* 3D Physics Canvas - Pushed down to avoid overlapping the center text */}
-      <div className="w-full h-[70vh] sm:h-[75vh] mt-20 relative z-10">
+      {/* ── 3D Physics Canvas ── */}
+      {/*
+        Key fixes:
+        1. eventSource={document.documentElement} — moves R3F event listeners
+           to the document root so the <canvas> element itself no longer
+           swallows pointer / wheel events.
+        2. eventPrefix="client" — required companion prop for eventSource.
+        3. The wrapper has pointer-events-none by default; we restore them
+           only for the canvas so hover/drag still work but scroll is free.
+      */}
+      <div
+        ref={canvasWrapperRef}
+        className="w-full relative"
+        style={{ height: "70vh" }}
+      >
         <Canvas
           shadows
           gl={{ alpha: true, stencil: false, depth: false, antialias: true }}
           camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
-          onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}
-          className="w-full h-full cursor-grab active:cursor-grabbing"
+          // Move event source to the document so the canvas DOM element
+          // no longer intercepts scroll / wheel events
+          eventSource={document.documentElement}
+          eventPrefix="client"
+          onCreated={(state) => {
+            state.gl.toneMappingExposure = 1.5;
+            // Ensure the canvas itself does NOT block touch scroll
+            state.gl.domElement.style.touchAction = "none";
+          }}
+          style={{ width: "100%", height: "100%" }}
+          className="cursor-grab active:cursor-grabbing"
         >
           <ambientLight intensity={1} />
           <spotLight
@@ -227,6 +280,7 @@ export function TechStack() {
             shadow-mapSize={[512, 512]}
           />
           <directionalLight position={[0, 5, -4]} intensity={2} />
+
           <Physics gravity={[0, 0, 0]}>
             <Pointer isActive={isActive} />
             {spheres.map((props, i) => {
@@ -243,7 +297,9 @@ export function TechStack() {
               );
             })}
           </Physics>
+
           <Environment preset="studio" environmentIntensity={0.5} />
+
           <EffectComposer enableNormalPass={false}>
             <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
           </EffectComposer>

@@ -30,7 +30,7 @@ const skillsData: SkillGroup[] = [
   {
     id: '05',
     name: 'Tools & DevOps',
-    tags: ['Git / GitLab', 'Docker', 'Jenkins', 'Jira', 'Postman', 'Swagger', 'AWS Cloud', 'GCP & Analytics', 'Azure DevOps', 'CI/CD Pipelines', 'Data Structures'],
+    tags: ['Git / GitLab', 'Docker', 'Jenkins', 'Jira', 'Postman', 'Swagger', 'AWS Cloud', 'GCP & Analytics', 'Azure DevOps', 'CI/CD Pipelines'],
   },
   {
     id: '06',
@@ -56,18 +56,17 @@ export function ServicesSection() {
           </h2>
         </FadeIn>
 
-        {/* Skills Grid — 2 columns on md+ */}
+        {/* Skills Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
           {skillsData.map((skill, i) => (
             <FadeIn
               key={skill.id}
-              delay={i * 0.08}
-              y={25}
-              duration={0.7}
+              delay={i * 0.06}
+              y={20}
+              duration={0.6}
               className="rounded-2xl border border-[rgba(12,12,12,0.12)] p-6 sm:p-8 hover:shadow-lg transition-shadow duration-300"
-              style={{ background: 'rgba(12,12,12,0.02)' } as any}
+              style={{ background: 'rgba(12,12,12,0.02)' } as React.CSSProperties}
             >
-              {/* Header */}
               <div className="flex items-baseline gap-3 mb-4">
                 <span
                   className="font-black text-[#0C0C0C]/20 leading-none select-none"
@@ -83,7 +82,6 @@ export function ServicesSection() {
                 </h3>
               </div>
 
-              {/* Tag pills */}
               <div className="flex flex-wrap gap-2">
                 {skill.tags.map((tag) => (
                   <span
@@ -106,4 +104,5 @@ export function ServicesSection() {
     </section>
   );
 }
+
 export default ServicesSection;

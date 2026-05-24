@@ -12,32 +12,52 @@ interface AnimatedTextProps {
 
 export function AnimatedText({ text, className = '', style }: AnimatedTextProps) {
   const containerRef = useRef<HTMLParagraphElement>(null);
+  const ctxRef = useRef<gsap.Context | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const words = containerRef.current.querySelectorAll('.anim-word');
+    const words = containerRef.current.querySelectorAll<HTMLSpanElement>('.anim-word');
     if (words.length === 0) return;
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        words,
-        { opacity: 0.15 },
-        {
-          opacity: 1,
-          stagger: 0.02,
-          ease: 'power1.out',
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top 85%',
-            end: 'bottom 40%',
-            scrub: true,
+    // Clean up any previous context
+    ctxRef.current?.revert();
+
+    ctxRef.current = gsap.context(() => {
+      // Batch words into groups of 5 to reduce ScrollTrigger count
+      const wordArray = Array.from(words);
+      const BATCH = 5;
+      const batches: HTMLSpanElement[][] = [];
+      for (let i = 0; i < wordArray.length; i += BATCH) {
+        batches.push(wordArray.slice(i, i + BATCH));
+      }
+
+      batches.forEach((batch, batchIndex) => {
+        ScrollTrigger.create({
+          trigger: containerRef.current,
+          start: 'top 85%',
+          end: 'bottom 40%',
+          scrub: 0.5,
+          onUpdate: (self) => {
+            // Map progress to each batch sequentially
+            const batchStart = batchIndex / batches.length;
+            const batchEnd = (batchIndex + 1) / batches.length;
+            const rawP = (self.progress - batchStart) / (batchEnd - batchStart);
+            const p = Math.max(0, Math.min(1, rawP));
+
+            batch.forEach((word, wi) => {
+              const wordProgress = (p * batch.length - wi);
+              const opacity = Math.max(0.15, Math.min(1, wordProgress));
+              word.style.opacity = String(opacity);
+            });
           },
-        }
-      );
+        });
+      });
     });
 
-    return () => ctx.revert();
+    return () => {
+      ctxRef.current?.revert();
+    };
   }, [text]);
 
   const words = text.split(' ');
@@ -49,7 +69,11 @@ export function AnimatedText({ text, className = '', style }: AnimatedTextProps)
       className={`${className} flex flex-wrap justify-center relative select-none leading-relaxed w-full gap-x-[0.22em] gap-y-[0.1em]`}
     >
       {words.map((word, i) => (
-        <span key={i} className="anim-word inline-block opacity-[0.15] will-change-[opacity]">
+        <span
+          key={i}
+          className="anim-word inline-block"
+          style={{ opacity: 0.15 }}
+        >
           {word}
         </span>
       ))}

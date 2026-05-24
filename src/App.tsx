@@ -7,24 +7,18 @@ import { FadeIn } from './components/ui/FadeIn';
 
 export function App() {
   return (
-    <div className="min-h-screen bg-[#0C0C0C] text-[#D7E2EA] font-sans selection:bg-[#B600A8]/30 selection:text-white overflow-x-clip">
-      {/* 1. Hero Section */}
+    <div
+      className="min-h-screen bg-[#0C0C0C] text-[#D7E2EA] font-sans selection:bg-[#B600A8]/30 selection:text-white overflow-x-clip"
+      // GPU-compositing hint for the root scroll container
+      style={{ contain: 'paint' }}
+    >
       <HeroSection />
-
-
-      {/* 3. About Section */}
       <AboutSection />
-
-      {/* 4. Skills Section (formerly Services) */}
       <ServicesSection />
-
-      {/* 3D Dynamic Tech Stack Section */}
       <TechStack />
-
-      {/* 5. Experience & Education Section */}
       <ExperienceSection />
 
-      {/* ── 7. CONTACT SECTION (FOOTER) ────────────────────────────────────── */}
+      {/* Contact / Footer */}
       <footer
         id="contact"
         className="bg-[#0C0C0C] text-[#D7E2EA] px-6 md:px-10 py-20 sm:py-24 border-t border-zinc-900 flex flex-col items-center text-center relative z-20"
@@ -48,7 +42,6 @@ export function App() {
           </a>
         </FadeIn>
 
-        {/* Footer Base */}
         <div className="w-full max-w-5xl flex flex-col sm:flex-row justify-between items-center mt-20 pt-8 border-t border-zinc-900 text-[10px] sm:text-xs text-[#D7E2EA]/40 gap-4">
           <p>© 2026 Gangesh Kumar. All Rights Reserved.</p>
           <div className="flex gap-6">

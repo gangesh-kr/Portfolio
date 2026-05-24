@@ -35,9 +35,8 @@ export function HeroSection() {
         </nav>
       </FadeIn>
 
-      {/* ── 2. PORTRAIT (CENTERED ABSOLUTELY) ──────────────────────────────── */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-        <FadeIn delay={0.6} y={30} duration={0.9} className="pointer-events-auto">
+        {/* ── 2. PORTRAIT (CENTERED ABSOLUTELY) ──────────────────────────────── */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">        <FadeIn delay={0.6} y={30} duration={0.9} className="pointer-events-auto">
           <Magnet
             padding={150}
             strength={3}
@@ -55,8 +54,8 @@ export function HeroSection() {
       </div>
 
       {/* ── 3. HERO HEADING ────────────────────────────────────────────────── */}
-      <div className="flex-1 flex items-center justify-center px-4 md:px-10 z-0 select-none">
-        <div className="w-full overflow-hidden flex justify-center">
+        {/* ── 3. HERO HEADING ────────────────────────────────────────────────── */}
+        <div className="flex-1 flex items-center justify-center px-4 md:px-10 z-30 select-none">        <div className="w-full overflow-hidden flex justify-center">
           <FadeIn delay={0.15} y={40} duration={0.8} className="w-full text-center">
             <h1 className="hero-heading text-[8.5vw] sm:text-[9vw] md:text-[9.5vw] lg:text-[9.5vw] font-black uppercase tracking-tight leading-none whitespace-nowrap mt-6 sm:mt-4 md:-mt-5">
               Hi, i&apos;m gangesh
